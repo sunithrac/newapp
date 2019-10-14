@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { element } from 'protractor';
 
 
 export interface SearchKey {
@@ -26,7 +27,7 @@ export class AppComponent {
 
   ngOnInit() {
     this.searchForm = this.formBuilder.group({
-      searchTxt: [this.serachTest[0], Validators.required]
+      searchTxt: ['', Validators.required]
     });
 
   }
@@ -46,12 +47,16 @@ export class AppComponent {
       let value = res[1];
       return { key, value };
     });
-    this.searchForm.patchValue(this.searchItems);
   }
   remove(i) {
-    this.searchItems.splice(i, 1); 
-   console.log(this.searchItems);
-   this.searchForm.patchValue(this.searchItems);
+   this.searchItems.splice(i, 1);
+   
+    let tempItem = [];
+    this.searchItems.map(function (element) {
+      tempItem.push(element.key+':'+element.value);
+    });
+    this.searchForm.controls['searchTxt'].setValue(tempItem);
+    this.search(this.searchForm.value);
   }
 
 }
