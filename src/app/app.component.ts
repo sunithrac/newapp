@@ -47,6 +47,12 @@ export class AppComponent {
       let value = res[1];
       return { key, value };
     });
+    let tempItem = [];
+    this.searchItems.map(function (element) {
+      tempItem.push(element.key+':'+element.value);
+    });
+    this.searchForm.controls['searchTxt'].setValue(tempItem);
+
   }
   remove(i) {
    this.searchItems.splice(i, 1);
