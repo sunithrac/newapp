@@ -3,7 +3,7 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 
 
 export interface SearchKey {
-  [key: string]: Object[];
+  [key: string]: any;
 }
 
 @Component({
@@ -16,33 +16,42 @@ export interface SearchKey {
 export class AppComponent {
 
   searchForm: FormGroup;
-  searchItems: Array<SearchKey>;
+  searchItems: SearchKey = {};
   removable = true;
+  serachTest = ' ';
+  splitcolonValues: any;
   constructor(
     private formBuilder: FormBuilder,
   ) { }
 
   ngOnInit() {
     this.searchForm = this.formBuilder.group({
-      searchTxt: ['', Validators.required]
+      searchTxt: [this.serachTest[0], Validators.required]
     });
 
   }
 
   search(searchText) {
-
-    let searchValue = searchText.replace(/\"/g, "");
-    let splitValues = searchValue.split(',');
-  
-    this.searchItems = splitValues.filter(function (value) {
+    let searchValues = searchText.replace(/\"/g, "");
+    let splitValues = searchValues.split(',');
+    let removeEmptyValues = splitValues.filter(function (value) {
       return value.trim() != '';
     });
-    this.searchForm.controls.searchTxt.setValue(this.searchItems);
-
+    this.splitcolonValues = [];
+    removeEmptyValues.forEach(element => {
+      this.splitcolonValues.push(element.split(':'));
+    });
+    this.searchItems = this.splitcolonValues.map(function (res) {
+      let key = res[0];
+      let value = res[1];
+      return { key, value };
+    });
+    this.searchForm.patchValue(this.searchItems);
   }
   remove(i) {
-    this.searchItems.splice(i, 1);
-    this.searchForm.controls.searchTxt.setValue(this.searchItems);
+    this.searchItems.splice(i, 1); 
+   console.log(this.searchItems);
+   this.searchForm.patchValue(this.searchItems);
   }
 
 }
