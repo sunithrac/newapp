@@ -11,13 +11,18 @@ import {
   MatInputModule,
   MatIconModule
 } from '@angular/material';
+import { HomeModule } from './home/home.module';
+import { NgxDatatableModule } from '@swimlane/ngx-datatable';
+import { FlexLayoutModule } from "@angular/flex-layout";
+import { HomeComponent } from './home/home.component';
 
 @NgModule({
   declarations: [
-    AppComponent
+    AppComponent,HomeComponent
   ],
   imports: [
     BrowserModule,
+    HomeModule,
     AppRoutingModule,
     FormsModule,
     MatChipsModule,
@@ -26,8 +31,11 @@ import {
     MatInputModule,
     BrowserAnimationsModule,
     ReactiveFormsModule,
+    FlexLayoutModule,
+    NgxDatatableModule,
   ],
   providers: [],
-  bootstrap: [AppComponent]
+  bootstrap: [AppComponent],
+  
 })
 export class AppModule { }

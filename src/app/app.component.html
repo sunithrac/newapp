@@ -1,15 +1,41 @@
-<form [formGroup]="searchForm">
-  <mat-form-field appearance="outline">
-    <input #box matInput type="text" formControlName="searchTxt" (keyup.enter)="search($event.target.value)">
-  </mat-form-field>
-</form>
+<div fxLayout="column" fxLayoutAlign="space-around center" fxLayoutGap="20px">
+  <form [formGroup]="searchForm" (ngSubmit)="search()">
+    <mat-form-field appearance="outline">
+      <input #box matInput type="text" formControlName="searchTxt" (keyup.enter)="search($event.target.value)">
+    </mat-form-field>
+    <button>Search</button>
+  </form>
+  <div >
+    <mat-chip-list #chipList>
+      <mat-chip *ngFor="let item of tagItem" [removable]="removable" (removed)="remove(item)">
+        {{item}}
+        <mat-icon matChipRemove *ngIf="removable">cancel</mat-icon>
+      </mat-chip>
+    </mat-chip-list>
+  </div>
 
-<div *ngIf="searchItems.length > 0">
-  <mat-chip-list #chipList>
-    <mat-chip *ngFor="let item of searchItems let i='index'" 
-    [removable]="removable" (removed)="remove(i)">
-      {{item.key}} : {{item.value}}
-      <mat-icon matChipRemove *ngIf="removable" >cancel</mat-icon>
-    </mat-chip>
-  </mat-chip-list>
+
+  <div>
+    <ngx-datatable #myTable class="material"  [rowHeight]="50" [summaryRow]="true" [rows]="rows" [columns]="columns">
+       <ngx-datatable-column name="Name">
+        <ng-template let-column="column" ngx-datatable-header-template> {{ column.name }} </ng-template>
+        <ng-template let-value="value" ngx-datatable-cell-template>
+          <strong>{{ value }}</strong>
+        </ng-template>
+      </ngx-datatable-column>
+      <ngx-datatable-column name="Gender">
+        <ng-template let-column="column" let-sort="sortFn" ngx-datatable-header-template>
+          <span>{{ column.name }}</span>
+        </ng-template>
+        <ng-template let-row="row" let-value="value" ngx-datatable-cell-template>
+          {{ value }}
+        </ng-template>
+      </ngx-datatable-column>
+      <ngx-datatable-column name="Company">
+        <ng-template #nameSummaryCell ngx-datatable-cell-template let-value="value">
+         <app-home></app-home>
+        </ng-template>
+      </ngx-datatable-column>
+    </ngx-datatable>
+  </div>
 </div>

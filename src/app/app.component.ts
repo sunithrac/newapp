@@ -1,7 +1,9 @@
-import { Component } from '@angular/core';
+import { Component, ViewChild, TemplateRef, ViewContainerRef, ComponentRef, ComponentFactory, ComponentFactoryResolver } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { Page, CorporateEmployee } from './model/data';
+import { NgStyle } from '@angular/common';
+import { HomeComponent } from './home/home.component';
 import { element } from 'protractor';
-
 
 export interface SearchKey {
   [key: string]: any;
@@ -17,52 +19,53 @@ export interface SearchKey {
 export class AppComponent {
 
   searchForm: FormGroup;
-  searchItems: SearchKey = {};
+  searchItems: SearchKey;
   removable = true;
-  serachTest = ' ';
-  splitcolonValues: any;
+  rows: any;
+  columns: any;
+
+  @ViewChild('myTable', { static: false }) table;
+
+  tagItem: any[];
+
   constructor(
-    private formBuilder: FormBuilder,
-  ) { }
+    private formBuilder: FormBuilder, private resolver: ComponentFactoryResolver
+  ) {
+
+  }
 
   ngOnInit() {
+
     this.searchForm = this.formBuilder.group({
       searchTxt: ['', Validators.required]
     });
-
+    this.rows = [
+      { name: 'Austin', gender: 'Male', company: 'Swimlane' },
+      { name: 'Dany', gender: 'Male', company: 'KFC' },
+      { name: 'Molly', gender: 'Female', company: 'Burger King' },
+    ];
+    this.columns = [
+      { name: 'name' },
+      { name: 'Gender' },
+      { name: 'Company' }
+    ];
   }
 
-  search(searchText) {
-    let searchValues = searchText.replace(/\"/g, "");
-    let splitValues = searchValues.split(',');
-    let removeEmptyValues = splitValues.filter(function (value) {
-      return value.trim() != '';
-    });
-    this.splitcolonValues = [];
-    removeEmptyValues.forEach(element => {
-      this.splitcolonValues.push(element.split(':'));
-    });
-    this.searchItems = this.splitcolonValues.map(function (res) {
-      let key = res[0];
-      let value = res[1];
-      return { key, value };
-    });
-    let tempItem = [];
-    this.searchItems.map(function (element) {
-      tempItem.push(element.key+':'+element.value);
-    });
-    this.searchForm.controls['searchTxt'].setValue(tempItem);
 
+  search() {
+    this.searchItems = {};
+    this.searchForm.value.searchTxt.replace(/\"/g, "").split(',').filter(value => { return value.trim() != '' }).map(element => { return element.split(':') }).map(data => { return this.searchItems[data[0]] = data[1] });
+    this.tagItem = [];
+    Object.entries(this.searchItems).map(element => { return this.tagItem.push(element[0] + ':' + element[1]) });
+    this.searchForm.controls['searchTxt'].setValue(this.tagItem);
   }
-  remove(i) {
-   this.searchItems.splice(i, 1);
-   
-    let tempItem = [];
-    this.searchItems.map(function (element) {
-      tempItem.push(element.key+':'+element.value);
+  remove(value) {
+    delete this.searchItems[value.split(':')[0]];
+    this.tagItem = this.tagItem.filter(item => {
+      if (item !== value) 
+      return true;
     });
-    this.searchForm.controls['searchTxt'].setValue(tempItem);
-    this.search(this.searchForm.value);
+    this.searchForm.controls['searchTxt'].setValue(this.tagItem);
   }
 
 }
