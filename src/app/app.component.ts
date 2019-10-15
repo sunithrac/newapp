@@ -54,18 +54,25 @@ export class AppComponent {
 
   search() {
     this.searchItems = {};
-    this.searchForm.value.searchTxt.replace(/\"/g, "").split(',').filter(value => { return value.trim() != '' }).map(element => { return element.split(':') }).map(data => { return this.searchItems[data[0]] = data[1] });
+    let searchValues = this.searchForm.value.searchTxt;
+    searchValues.replace(/\"/g, "")
+      .split(',')
+      .filter(value => value.trim().length)
+      .map(res => {
+        const val = res.split(':');
+        this.searchItems[val.shift()] = val.pop();
+        this.reBuildTag(this.searchItems);
+      });
+  }
+  reBuildTag(searchItems) {
     this.tagItem = [];
-    Object.entries(this.searchItems).map(element => { return this.tagItem.push(element[0] + ':' + element[1]) });
+    Object.entries(this.searchItems).map(([key, value]) => { this.tagItem.push(`${key}: ${value}`) });
     this.searchForm.controls['searchTxt'].setValue(this.tagItem);
+    this.searchForm.value.searchTxt = '';
   }
   remove(value) {
-    delete this.searchItems[value.split(':')[0]];
-    this.tagItem = this.tagItem.filter(item => {
-      if (item !== value) 
-      return true;
-    });
-    this.searchForm.controls['searchTxt'].setValue(this.tagItem);
+    delete this.searchItems[value.split(':').shift()];
+    this.reBuildTag(this.searchItems);
   }
 
 }

@@ -1,9 +1,9 @@
 <div fxLayout="column" fxLayoutAlign="space-around center" fxLayoutGap="20px">
   <form [formGroup]="searchForm" (ngSubmit)="search()">
     <mat-form-field appearance="outline">
-      <input #box matInput type="text" formControlName="searchTxt" (keyup.enter)="search($event.target.value)">
+      <input #box matInput type="text" formControlName="searchTxt" >
     </mat-form-field>
-    <button>Search</button>
+    <button type="submit">Search</button>
   </form>
   <div >
     <mat-chip-list #chipList>
