@@ -60,22 +60,23 @@ export class AppComponent {
       .filter(value => value.trim().length)
       .map(res => {
         const val = res.split(':');
-        if (val[0] && val[1]) {
-          return { 'searchKey': val.shift(), 'searchValue': val.pop() };
+        let [key, value] = val;
+        if (key && value) {
+          return { 'searchKey': key, 'searchValue': value };
         }
         return null;
       })
       .filter(data => data !== null);
-    this.reBuildTag(this.searchItems);
+    this.reBuildTag();
   }
-  private reBuildTag(searchItems) {
+  private reBuildTag() {
     this.tagItem = [];
-    this.searchItems.map(values => { this.tagItem.push(values.searchKey + ':' + values.searchValue) });
-    this.searchForm.controls['searchTxt'].setValue('"' + this.tagItem.join('","') + '"');
+    this.searchItems.map(values => { this.tagItem.push(`"${values.searchKey}:${values.searchValue}"`)});
+    this.searchForm.controls['searchTxt'].setValue(this.tagItem.join(','));
   }
   remove(index) {
     this.searchItems.splice(index, 1);
-    this.reBuildTag(this.searchItems);
+    this.reBuildTag();
   }
 
 }
