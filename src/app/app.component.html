@@ -7,8 +7,8 @@
   </form>
   <div >
     <mat-chip-list #chipList>
-      <mat-chip *ngFor="let item of tagItem" [removable]="removable" (removed)="remove(item)">
-        {{item}}
+      <mat-chip *ngFor="let item of searchItems let i = index" [removable]="removable" (removed)="remove(i)">
+        {{item.searchKey}} : {{item.searchValue}}
         <mat-icon matChipRemove *ngIf="removable">cancel</mat-icon>
       </mat-chip>
     </mat-chip-list>

@@ -53,25 +53,28 @@ export class AppComponent {
 
 
   search() {
-    this.searchItems = {};
+    this.searchItems = [];
     let searchValues = this.searchForm.value.searchTxt;
-    searchValues.replace(/\"/g, "")
+    this.searchItems = searchValues.replace(/\"/g, "")
       .split(',')
       .filter(value => value.trim().length)
       .map(res => {
         const val = res.split(':');
-        this.searchItems[val.shift()] = val.pop();
-        this.reBuildTag(this.searchItems);
-      });
+        if (val[0] && val[1]) {
+          return { 'searchKey': val.shift(), 'searchValue': val.pop() };
+        }
+        return null;
+      })
+      .filter(data => data !== null);
+    this.reBuildTag(this.searchItems);
   }
-  reBuildTag(searchItems) {
+  private reBuildTag(searchItems) {
     this.tagItem = [];
-    Object.entries(this.searchItems).map(([key, value]) => { this.tagItem.push(`${key}: ${value}`) });
-    this.searchForm.controls['searchTxt'].setValue(this.tagItem);
-    this.searchForm.value.searchTxt = '';
+    this.searchItems.map(values => { this.tagItem.push(values.searchKey + ':' + values.searchValue) });
+    this.searchForm.controls['searchTxt'].setValue('"' + this.tagItem.join('","') + '"');
   }
-  remove(value) {
-    delete this.searchItems[value.split(':').shift()];
+  remove(index) {
+    this.searchItems.splice(index, 1);
     this.reBuildTag(this.searchItems);
   }
 
